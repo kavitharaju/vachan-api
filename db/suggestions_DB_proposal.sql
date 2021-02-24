@@ -65,35 +65,56 @@ CREATE TABLE public.translation_projects(
         REFERENCES languages(language_id) ON DELETE CASCADE,
     target_lang_id int NOT NULL 
         REFERENCES languages(language_id) ON DELETE CASCADE,
-    source_document sentence[],
     source_document_format text DEFAULT 'USFM',
-    draft text,
-    draft_corrected boolean DEFAULT false,
-    active boolean default true
+    active boolean default true,
+    created_user int NULL
+        REFERENCES users(user_id) ON DELETE CASCADE,
+    created_at timestamp with time zone DEFAULT NOW()
 );
+
+CREATE TABLE public.translation_drafts(
+    draft_id SERIAL PRIMARY KEY,
+    project_id int NOT NULL 
+        REFERENCES translation_projects(project_id) ON DELETE CASCADE,
+    sentence_id int NOT NULL unique,
+    sentence text,
+    draft text,
+    draft_meta jsonb[],
+    -- created_at timestamp with time zone DEFAULT NOW(),
+    -- created_user int NULL,
+    last_updated_user int NULL
+        REFERENCES users(user_id) ON DELETE CASCADE,
+    last_updated_at  timestamp with time zone DEFAULT NOW()
+);
+
 
 CREATE TABLE public.translation_project_users(
     project_id int REFERENCES translation_projects(project_id),
     user_id int REFERENCES users(user_id)
 );
 
-CREATE TYPE occurance AS(
-    sentence_id int,
-    char_offset int
-);
+-- CREATE TYPE occurance AS(
+--     sentence_id int,
+--     char_offset_start int,
+--     char_offset_end int
+-- );
 
-CREATE TYPE suggestion AS(
-    suggestion text,
-    score numeric
-);
+-- CREATE TYPE suggestion AS(
+--     suggestion text,
+--     score numeric
+-- );
 
 CREATE TABLE public.translation_memory(
     translation_id int PRIMARY KEY,
     project_id int REFERENCES translation_projects(project_id),
-    token_occurance occurance NOT NULL,
+    sentence_id int REFERENCES translation_drafts(sentence_id),
+    char_offset_start int NOT NULL,
+    char_offset_end int,
     token text NOT NULL,
-    translation_suggestions suggestion[],
-    verified_translation_offset occurance NOT NULL,
-    verified_translation text
+    -- verified_offset occurance NOT NULL,
+    verified_translation text,
+    last_updated_user int NULL
+        REFERENCES users(user_id) ON DELETE CASCADE,
+    last_updated_at  timestamp with time zone DEFAULT NOW()
 );
 
