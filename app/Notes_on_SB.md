@@ -6,6 +6,8 @@
 
 2. [Languages](https://docs.burrito.bible/en/v0.3.0-alpha.2/schema_docs/language.html#language)
  Here 2 letter language codes are used. In our database we use 3 letter codes. Either add 2 also in Db and use it for export, or switch to 2 letter codes entirely. Make sure our minority lanugages also have this 2 letter code representations.
+we should follow this https://tools.ietf.org/html/bcp47 
+
 
 3. [wordAlignment](https://docs.burrito.bible/en/v0.3.0-alpha.2/schema_docs/parascriptural-word_alignment.html#flavor-details-parascriptural-word-alignment)
 Contains only meta data specifications
