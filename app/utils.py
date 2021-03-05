@@ -84,23 +84,29 @@ def book_code(book_num):
         return books[book_num]['book_code'].upper()
     return None
 
-stopwords = {
+known_stopwords = {
     "eng": { "postpositions" : ["t", "s"],
-             "prepositions": ["a", "an", "the", "is", "are", "was", "were", "has",
-             "have", "had", "with", "for"]},
-    "hin": { "postpositions" : ["का", "कॆ", 'कि', 'की', 'कॊ', 'कि', 'को', 'मॆं', 'मॆ',
-                'सॆ', 'हं', 'हॊ'],
-             "prepositions": [] }
+             "prepositions": ["am", "is", "are", "was", "were", "be", "been", "being", "have",
+                "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and",
+                "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for",
+                "with", "about", "against", "between", "into", "through", "during", "before",
+                "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off",
+                "over", "under", "again", "further", "then", "once", "here", "there", "when",
+                "where", "why", "how", "all", "any", "both", "each", "few", "more", "most",
+                "other", "some", "such", "no", "nor", "not", "only", "same", "so", "than",
+                "too", "very", "can", "will", "just", "don", "should"]},
+    "hin": { "postpositions" : ["के", "का", "में", "की", "है", "और", "से", "हैं", "को", "पर",
+                "होता", "कि","जो", "कर", "मे", "गया", "करने", "किया", "लिये", "ने", "बनी", "नहीं",
+                "तो", "ही", "या", "दिया", "हो", "था", "हुआ", "तक", "साथ", "करना", "वाले",
+                "बाद", "लिए", "सकते", "ये", "थे", "दो", "होने", "वे", "करते", "करें", "होती", "थी",
+                "हुई", "जा", "होते", "हुए", "करता", "तरह", "रहा", "सकता", "रहे", "रखें", "आदि"],
+             "prepositions": ["कोई", "व", "न", "ना", "इसी", "अभी", "जैसे", "सभी", "सबसे",
+                "यह", "इस", "एवं", "कुछ", "किसी", "बहुत", "इसे", "उस", "कई", "एस"] }
 }
 
-def prepositions(lang):
-    '''returns the prepositions if defined for the language. else []'''
-    if lang in stopwords and "prepositions" in stopwords[lang]:
-        return stopwords[lang]["prepositions"]
+def stopwords(lang):
+    '''returns the stopwords if defined for the language. else []'''
+    if lang in known_stopwords :
+        return known_stopwords[lang]
     return []
 
-def postpositions(lang):
-    '''returns the postpositions if defined for the language. else []'''
-    if lang in stopwords and "postpositions" in stopwords[lang]:
-        return stopwords[lang]["postpositions"]
-    return []
