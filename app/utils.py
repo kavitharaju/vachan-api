@@ -99,14 +99,14 @@ known_stopwords = {
                 "होता", "कि","जो", "कर", "मे", "गया", "करने", "किया", "लिये", "ने", "बनी", "नहीं",
                 "तो", "ही", "या", "दिया", "हो", "था", "हुआ", "तक", "साथ", "करना", "वाले",
                 "बाद", "लिए", "सकते", "ये", "थे", "दो", "होने", "वे", "करते", "करें", "होती", "थी",
-                "हुई", "जा", "होते", "हुए", "करता", "तरह", "रहा", "सकता", "रहे", "रखें", "आदि"],
+                "हुई", "जा", "होते", "हुए", "करता", "तरह", "रहा", "सकता", "रहे", "रखें"],
              "prepositions": ["कोई", "व", "न", "ना", "इसी", "अभी", "जैसे", "सभी", "सबसे",
                 "यह", "इस", "एवं", "कुछ", "किसी", "बहुत", "इसे", "उस", "कई", "एस"] }
 }
 
 def stopwords(lang):
-    '''returns the stopwords if defined for the language. else []'''
+    '''returns the stopwords if defined for the language. else empty object'''
     if lang in known_stopwords :
         return known_stopwords[lang]
-    return []
+    return {"prepositions":[], "postpositions":[]}
 
