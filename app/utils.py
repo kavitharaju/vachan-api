@@ -109,4 +109,3 @@ def stopwords(lang):
     if lang in known_stopwords :
         return known_stopwords[lang]
     return {"prepositions":[], "postpositions":[]}
-
