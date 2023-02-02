@@ -39,6 +39,7 @@
     "translation-project":{
         "create":["SuperAdmin", "AgAdmin", "AgUser"],
         "create-user":["SuperAdmin", "AgAdmin", "projectOwner"],
+        "delete-user":["SuperAdmin", "AgAdmin", "projectOwner"],
         "edit-Settings":["SuperAdmin", "AgAdmin", "projectOwner"],
         "read-settings":["SuperAdmin", "AgAdmin", "projectOwner", "projectMember"],
         "edit-draft": ["SuperAdmin", "AgAdmin", "projectOwner", "projectMember"],

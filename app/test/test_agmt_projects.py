@@ -303,9 +303,13 @@ def test_put_invalid():
 
 def check_project_user(project_name, user_id, role=None, status=None, metadata = None):
     '''Make sure the user is in project and if specified, check for other values'''
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgAdmin']['token']
     response = client.get(UNIT_URL+'?project_name='+project_name,headers=headers_auth)
     found_user = False
     found_owner = False
+    # print(response.json())
+    print("Response ---> project-users:", response.json()[0]['users'])
+
     for user in response.json()[0]['users']:
         if user['userId'] == user_id:
             found_user = True
@@ -487,6 +491,78 @@ def test_update_user_invlaid():
     assert_input_validation_error(response)
 
 
+def test_delete_user():
+    '''Test the removal of a user from a project'''
+    project_data = {
+        "projectName": "Test project 1",
+        "sourceLanguageCode": "hi",
+        "targetLanguageCode": "ml"
+    }
+    resp = check_post(project_data, auth_token=initial_test_users['AgAdmin']['token'])
+    assert resp.json()['message'] == "Project created successfully"
+    new_project = resp.json()['data']
+    new_user_id = initial_test_users['AgUser']['test_user_id']
+
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgAdmin']['token']
+    resp = client.post(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(new_user_id),headers=headers_auth)
+    assert resp.json()['message'] == "User added to project successfully"
+
+    # fetch this project and check for new user
+    check_project_user(project_data['projectName'], new_user_id, role='projectMember')
+
+    #no auth
+    resp = client.delete(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(new_user_id),headers=headers)
+    assert resp.status_code == 401
+    assert resp.json()['details'] == "Access token not provided or user not recognized."
+    check_project_user(project_data['projectName'], new_user_id, role='projectMember')
+
+    # deleting non existing user
+    second_user_id = initial_test_users['AgUser2']['test_user_id']
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgAdmin']['token']
+    resp = client.delete(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(second_user_id),headers=headers_auth)
+    assert resp.status_code == 404
+    assert resp.json()['details'] == "User-project pair not found"
+
+    resp = client.post(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(second_user_id),headers=headers_auth)
+    assert resp.json()['message'] == "User added to project successfully"
+    check_project_user(project_data['projectName'], second_user_id, role='projectMember')
+
+    # # as non-owner user
+    user_id = initial_test_users['AgUser2']['test_user_id']
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgUser']['token']
+    resp = client.delete(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(user_id),headers=headers_auth)
+    assert resp.status_code == 403
+    assert resp.json()['error'] == "Permission Denied"
+    check_project_user(project_data['projectName'], user_id, role='projectMember')
+
+    # as same user
+    user_id = initial_test_users['AgAdmin']['test_user_id']
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgAdmin']['token']
+    resp = client.delete(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(user_id),headers=headers_auth)
+    assert resp.status_code == 403
+    assert resp.json()['details'] == "A user cannot remove oneself from a project."
+    check_project_user(project_data['projectName'], user_id, role='projectOwner')
+
+    # as project owner - Positive test
+    user_id = initial_test_users['AgUser2']['test_user_id']
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgAdmin']['token']
+    resp = client.delete(USER_URL+'?project_id='+str(new_project['projectId'])+
+        '&user_id='+str(user_id),headers=headers_auth)
+    assert resp.status_code == 201
+    assert "successfull" in resp.json()['message']
+
+    # Check get project to ensure deleted user is not present
+
+    # restore
+
+    # Check get project and ensure the restored user is present
+
 def test_soft_delete():
     '''Check if unsetting active status works the desired way'''
     data = [
@@ -525,7 +601,7 @@ def test_soft_delete():
         response = check_post(item)
         assert response.status_code == 201
         assert response.json()['message'] == "Project created successfully"
-
+    headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgAdmin']['token']
     get_response1 = client.get(UNIT_URL,headers=headers_auth)
     assert len(get_response1.json()) >= len(data)
 
@@ -714,7 +790,7 @@ def test_agmt_projects_access_rule():
     #update user with not owner
     headers_auth['Authorization'] = "Bearer"+" "+initial_test_users['AgUser']['token']
     update_data = {
-        "project_id": project1_id,
+        "project_id": project8_id,
         "userId": new_user_id
     }
     # add metadata

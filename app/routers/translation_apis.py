@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from dependencies import get_db, log, AddHiddenInput
 from schema import schemas, schemas_nlp, schema_auth, schema_content
-from crud import nlp_crud, projects_crud, nlp_sw_crud
+from crud import nlp_crud, projects_crud, nlp_sw_crud, structurals_crud
 from custom_exceptions import GenericException
 from routers import content_apis
 from auth.authentication import get_user_or_none,get_auth_access_check_decorator
@@ -127,6 +127,28 @@ async def update_user(request: Request,user_obj:schemas_nlp.ProjectUser,
     return {'message': "User updated in project successfully",
         "data": projects_crud.update_agmt_user(db_, user_obj,
             current_user=user_details['user_id'])}
+
+@router.delete('/v2/autographa/project/user', status_code=201,
+    response_model=schemas.DeleteResponse,
+    responses={502: {"model": schemas.ErrorResponse},
+    422: {"model": schemas.ErrorResponse},401: {"model": schemas.ErrorResponse},
+    404: {"model": schemas.ErrorResponse}, 403:{"model": schemas.ErrorResponse}},
+    tags=['Autographa-Project management'])
+@get_auth_access_check_decorator
+async def remove_user(request: Request,project_id:int, user_id:str,
+    user_details =Depends(get_user_or_none), db_: Session = Depends(get_db)):
+    '''Removes a user from a project.'''
+    log.info('In remove_user')
+    log.debug('project_id:%s, user_id:%s',project_id, user_id)
+    deleted_content = projects_crud.remove_agmt_user(db_, project_id, user_id,
+            current_user=user_details['user_id'])
+    delcont = structurals_crud.add_deleted_data(db_, del_content= deleted_content['db_content'],
+        table_name = "translation_project_users", deleting_user=user_details['user_id'])
+    return {'message': "User removed from project successfully",
+        "data": {
+            "db_content":delcont,
+            "project_content": deleted_content['project_content']
+        }}
 
 ############## Autographa Translations ##########################
 @router.get('/v2/autographa/project/tokens', response_model=List[schemas_nlp.Token],
