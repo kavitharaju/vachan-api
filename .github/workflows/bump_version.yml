@@ -13,7 +13,7 @@ jobs:
     steps:
       # Checkout the branch
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: change the version in main.py
         run: |
@@ -45,5 +45,5 @@ jobs:
           default_author: github_actor
           message: 'Bump version automatically on realease'
           add: './app/main.py'
-          fetch: 'origin bump-version-on-release'
-          push: 'origin bump-version-on-release' 
+          # fetch: 'origin bump-version-on-release'
+          # push: 'origin bump-version-on-release --force' 
