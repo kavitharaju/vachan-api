@@ -17,7 +17,7 @@ jobs:
 
       - name: change the version in main.py
         run: |
-          VERSION=$(echo $GITHUB_REF | sed 's|.*/v(.*)|"\1"|')
+          VERSION=$(echo $GITHUB_REF | sed 's|.*/v||')
           echo ${VERSION}
           sed -i "s|version=\".*\"|version=\"${VERSION}\",|" app/main.py
           head -n 33 app/main.py | tail -n 4
