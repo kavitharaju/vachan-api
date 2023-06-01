@@ -19,7 +19,7 @@ jobs:
         run: |
           VERSION=$(echo $GITHUB_REF | sed 's|.*/v(.*)|"\1"|')
           echo ${VERSION}
-          sed -i 's|version=.*,|version=${VERSION},|' app/main.py
+          sed -i "s|version=\".*\"|version=\"${VERSION}\",|" app/main.py
           head -n 33 app/main.py | tail -n 4
 
       - name: Commit changes
