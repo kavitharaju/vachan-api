@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  get-versiontag-n-update-code:
+  get-versiontag-n-update-cogit describe --tags --abbrev=0de:
     runs-on: ubuntu-latest
     steps:
       # Checkout the branch
@@ -26,10 +26,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           default_author: github_actor
-          message: 'Bump version automatically on realease'
+          message: 'Bump version automatically on release'
           add: './app/main.py'
+          tag: '-a $(git describe --tags --abbrev=0) -m "moving tag to new commit" -f $(git rev-parse HEAD)'
           push: 'origin HEAD:bump-version-on-release --force'
-
-      - name: Change the release to include new commit
-        run: |
-          git rev-parse HEAD | git tag -m "moving tag to new commit" -f -a ${VERSION}
