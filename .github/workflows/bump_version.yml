@@ -37,7 +37,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: pocket-apps/action-update-version@v1
         with:
-          files: 'package.json, app.yaml'
+          files: 'app/main.py'
           version-regexp: '\d+.\d+.\d+(-\w+.\d+)?'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          
