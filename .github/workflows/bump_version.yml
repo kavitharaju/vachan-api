@@ -31,4 +31,6 @@ jobs:
           # Stage the file, commit and push
           git add app/main.py
           git commit -m "Change version tag in code"
+          git remote -v
+          git branch -r
           git push origin version-2
