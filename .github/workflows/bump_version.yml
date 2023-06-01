@@ -46,4 +46,4 @@ jobs:
           message: 'Bump version automatically on realease'
           add: './app/main.py'
           # fetch: 'origin bump-version-on-release'
-          # push: 'origin bump-version-on-release --force' 
+          push: 'origin HEAD:bump-version-on-release --force' 
