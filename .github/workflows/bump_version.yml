@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  get-versiontag-n-update-cogit describe --tags --abbrev=0de:
+  get-versiontag-n-update-code:
     runs-on: ubuntu-latest
     steps:
       # Checkout the branch
