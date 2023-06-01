@@ -27,6 +27,8 @@ jobs:
           git config user.email "<>"
 
       - name: commit
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Stage the file, commit and push
           git add app/main.py
