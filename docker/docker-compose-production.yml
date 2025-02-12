@@ -345,7 +345,7 @@ services:
      - VE-network
 
  vachan-ai:
-    image: vachanengine/vachan-ai:25.1.16-beta
+    image: vachanengine/vachan-ai:25.2.12-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -357,6 +357,8 @@ services:
      - VACHAN_POSTGRES_DATABASE=${VACHAN_POSTGRES_DATABASE:-vachan_dev}
      - VACHAN_POSTGRES_SCHEMA=${VACHAN_POSTGRES_SCHEMA:-aischema}
      - VACHAN_POSTGRES_PORT=5432
+     - VACHAN_POSTGRES_POOL_SIZE=${VACHAN_POSTGRES_POOL_SIZE:-20}
+     - VACHAN_POSTGRES_MAX_OVERFLOW=${VACHAN_POSTGRES_MAX_OVERFLOW:-30}
 
      - VACHAN_AI_XLSR_MAX_AUDIO_DURATION=${VACHAN_AI_XLSR_MAX_AUDIO_DURATION:-25}
      - VACHAN_AI_XLSR_SAMPLING_RATE=${VACHAN_AI_XLSR_SAMPLING_RATE:-16000}
@@ -420,7 +422,7 @@ services:
 
 
  worker:
-    image: vachanengine/vachan-ai:25.1.16-beta
+    image: vachanengine/vachan-ai:25.2.12-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -434,6 +436,8 @@ services:
      - VACHAN_POSTGRES_DATABASE=${VACHAN_POSTGRES_DATABASE:-vachan_dev}
      - VACHAN_POSTGRES_SCHEMA=${VACHAN_POSTGRES_SCHEMA:-aischema}
      - VACHAN_POSTGRES_PORT=5432
+     - VACHAN_POSTGRES_POOL_SIZE=${VACHAN_POSTGRES_POOL_SIZE:-20}
+     - VACHAN_POSTGRES_MAX_OVERFLOW=${VACHAN_POSTGRES_MAX_OVERFLOW:-30}
      - VACHAN_AI_REDIS_QUE_TIMEOUT=${VACHAN_AI_REDIS_QUE_TIMEOUT:-900}
      - VACHAN_AI_DFNT_SAMPLING_RATE=${VACHAN_AI_DFNT_SAMPLING_RATE:-48000}
      - VACHAN_AI_INA_SAMPLING_RATE=${VACHAN_AI_INA_SAMPLING_RATE:-16000}
@@ -454,7 +458,7 @@ services:
       - redis
       - vachan-api
     volumes:
-     - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/redis_worker-logs-vol:/app/rqlogs
+     - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/redis_worker-logs-vol:/app/logs
      - ../data/csvs:/csvs
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/Downloads:/tmp
     profiles:
