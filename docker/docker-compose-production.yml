@@ -345,7 +345,7 @@ services:
      - VE-network
 
  vachan-ai:
-    image: vachanengine/vachan-ai:25.2.12-beta
+    image: vachanengine/vachan-ai:25.4.22-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -355,7 +355,7 @@ services:
      - VACHAN_POSTGRES_USER=${VACHAN_POSTGRES_USER:-postgres}
      - VACHAN_POSTGRES_PASSWORD=${VACHAN_POSTGRES_PASSWORD:-password}
      - VACHAN_POSTGRES_DATABASE=${VACHAN_POSTGRES_DATABASE:-vachan_dev}
-     - VACHAN_POSTGRES_SCHEMA=${VACHAN_POSTGRES_SCHEMA:-aischema}
+     - VACHAN_POSTGRES_SCHEMA=${VACHAN_POSTGRES_SCHEMA:-ai_schema}
      - VACHAN_POSTGRES_PORT=5432
      - VACHAN_POSTGRES_POOL_SIZE=${VACHAN_POSTGRES_POOL_SIZE:-20}
      - VACHAN_POSTGRES_MAX_OVERFLOW=${VACHAN_POSTGRES_MAX_OVERFLOW:-30}
@@ -370,9 +370,7 @@ services:
      - VACHAN_AI_ARTIFACT_PATH=${VACHAN_AI_ARTIFACT_PATH:-models}
      - VACHAN_AI_SERVED_MODEL_URI=${VACHAN_AI_SERVED_MODEL_URI:-http://dov2prodconn.bridgeconn.com:8085}
      - VACHAN_AI_MODEL_SETTINGS_DIR=${VACHAN_AI_MODEL_SETTINGS_DIR:-serving_model}
-     - VACHAN_AI_REQUEST_TIMEOUT=${VACHAN_AI_REQUEST_TIMEOUT:-120}
 
-     - VACHAN_AI_S3_BUCKET=${VACHAN_AI_S3_BUCKET}
      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
@@ -395,12 +393,14 @@ services:
      - VACHAN_AI_MLFLOW_DST_PATH=${VACHAN_AI_MLFLOW_DST_PATH:-/var/common/mlflow}
      - VACHAN_DOMAIN=http://vachan-access:8007
      - VACHAN_AI_DOMAIN=${VACHAN_AI_DOMAIN:-https://api.vachanengine.org/}
+     - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/config}
     command: uvicorn main:app --host 0.0.0.0 --port 8009
     volumes:
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/ai-logs-vol:/app/logs
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/cache:/root/.cache
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/Downloads:/tmp
      - ${VACHAN_AI_DATA_PATH}/Downloads:${VACHAN_AI_DATA_PATH}/Downloads
+     - ${VACHAN_AI_CONFIG_PATH}:/config
     restart: always
     links:
       - redis
@@ -422,7 +422,7 @@ services:
 
 
  worker:
-    image: vachanengine/vachan-ai:25.2.12-beta
+    image: vachanengine/vachan-ai:25.4.22-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -434,7 +434,7 @@ services:
      - VACHAN_POSTGRES_USER=${VACHAN_POSTGRES_USER:-postgres}
      - VACHAN_POSTGRES_PASSWORD=${VACHAN_POSTGRES_PASSWORD:-password}
      - VACHAN_POSTGRES_DATABASE=${VACHAN_POSTGRES_DATABASE:-vachan_dev}
-     - VACHAN_POSTGRES_SCHEMA=${VACHAN_POSTGRES_SCHEMA:-aischema}
+     - VACHAN_POSTGRES_SCHEMA=${VACHAN_POSTGRES_SCHEMA:-ai_schema}
      - VACHAN_POSTGRES_PORT=5432
      - VACHAN_POSTGRES_POOL_SIZE=${VACHAN_POSTGRES_POOL_SIZE:-20}
      - VACHAN_POSTGRES_MAX_OVERFLOW=${VACHAN_POSTGRES_MAX_OVERFLOW:-30}
@@ -444,8 +444,9 @@ services:
      - VACHAN_AI_OPEN_VOICE_MIN_DURATION=${VACHAN_AI_OPEN_VOICE_MIN_DURATION:-10}
      - VACHAN_AI_DATA_PATH=${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}
      - VACHAN_AI_SERVED_MODEL_URI=${VACHAN_AI_SERVED_MODEL_URI:-http://dov2prodconn.bridgeconn.com:8085}
-     - VACHAN_AI_REQUEST_TIMEOUT=${VACHAN_AI_REQUEST_TIMEOUT:-120}
+     - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/config} 
      - VACHAN_USE_VE_AUTH=${VACHAN_USE_VE_AUTH:-True}
+     - VACHAN_AI_ENV=${VACHAN_AI_ENV:-Production}
      - PYTHONPATH=/app/app/core/model_access/ai_model_core.py:/app/app/core/cloud_operations
      - VACHAN_AI_LOGGING_LEVEL=INFO
      - WORKER_COUNT=${WORKER_COUNT:-4}
@@ -461,6 +462,7 @@ services:
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/redis_worker-logs-vol:/app/logs
      - ../data/csvs:/csvs
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/Downloads:/tmp
+     - ${VACHAN_AI_CONFIG_PATH}:/config
     profiles:
      - local-run
      - deployment
