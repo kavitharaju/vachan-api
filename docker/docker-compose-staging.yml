@@ -378,14 +378,14 @@ services:
      - VACHAN_AI_MLFLOW_DST_PATH=${VACHAN_AI_MLFLOW_DST_PATH:-/var/common/mlflow}
      - VACHAN_DOMAIN=http://vachan-access:8007
      - VACHAN_AI_DOMAIN=${VACHAN_AI_DOMAIN:-https://api.vachanengine.org/}
-     - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/config}
+     - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/app/config}
     command: uvicorn main:app --host 0.0.0.0 --port 8009
     volumes:
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/ai-logs-vol:/app/logs
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/cache:/root/.cache
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/Downloads:/tmp
      - ${VACHAN_AI_DATA_PATH}/Downloads:${VACHAN_AI_DATA_PATH}/Downloads
-     - ${VACHAN_AI_CONFIG_PATH}:/config
+     - ${VACHAN_AI_CONFIG_PATH}:/app/config
     restart: always
     links:
       - redis
@@ -428,7 +428,7 @@ services:
      - VACHAN_AI_ENV=${VACHAN_AI_ENV:-Production}
      - VACHAN_AI_DATA_PATH=${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}
      - VACHAN_AI_SERVED_MODEL_URI=${VACHAN_AI_SERVED_MODEL_URI:-http://dov2prodconn.bridgeconn.com:8085}
-     - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/config} 
+     - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/app/config} 
      - PYTHONPATH=/app/app/core/model_access/ai_model_core.py:/app/app/core/cloud_operations
      - VACHAN_AI_LOGGING_LEVEL=INFO
      - WORKER_COUNT=${WORKER_COUNT:-4}
@@ -444,7 +444,7 @@ services:
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/redis_worker-logs-vol:/app/logs
      - ../data/csvs:/csvs
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/Downloads:/tmp
-     - ${VACHAN_AI_CONFIG_PATH}:/config
+     - ${VACHAN_AI_CONFIG_PATH}:/app/config
     profiles:
      - local-run
      - deployment
