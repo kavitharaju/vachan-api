@@ -397,7 +397,7 @@ services:
      - VACHAN_AI_DOMAIN=${VACHAN_AI_DOMAIN:-https://api.vachanengine.org/}
      - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/app/config}
      - VACHAN_AI_REFERENCE_SPEAKERS=${VACHAN_AI_REFERENCE_SPEAKERS:-/app/reference_speakers}
-        # HyperDX/OpenTelemetry Configuration
+     # HyperDX/OpenTelemetry Configuration
      - HYPERDX_API_KEY=${HYPERDX_API_KEY}
      - OTEL_SERVICE_NAME=vachan-ai
      - OTEL_EXPORTER_OTLP_ENDPOINT=http://hyperdx:4318
