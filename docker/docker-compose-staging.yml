@@ -337,8 +337,25 @@ services:
     networks:
      - VE-network
 
+ 
+ hyperdx:
+    image: docker.hyperdx.io/hyperdx/hyperdx-all-in-one
+    container_name: hyperdx
+    ports:
+      - "8010:8080"   # HyperDX UI
+      - "4317:4317"    # OTLP gRPC (optional)
+      - "4318:4318"    # OTLP HTTP (used by vachan-ai)
+    expose:
+      - 4317
+      - 4318
+      - 8080
+    networks:
+      - VE-network
+    restart: unless-stopped
+
+
  vachan-ai:
-    image: vachanengine/vachan-ai:25.5.28-beta
+    image: vachanengine/vachan-ai:25.7.21-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -380,7 +397,20 @@ services:
      - VACHAN_AI_DOMAIN=${VACHAN_AI_DOMAIN:-https://api.vachanengine.org/}
      - VACHAN_AI_CONFIG_PATH=${VACHAN_AI_CONFIG_PATH:-/app/config}
      - VACHAN_AI_REFERENCE_SPEAKERS=${VACHAN_AI_REFERENCE_SPEAKERS:-/app/reference_speakers}
-    command: uvicorn main:app --host 0.0.0.0 --port 8009
+        # HyperDX/OpenTelemetry Configuration
+     - HYPERDX_API_KEY=${HYPERDX_API_KEY}
+     - OTEL_SERVICE_NAME=vachan-ai
+     - OTEL_EXPORTER_OTLP_ENDPOINT=http://hyperdx:4318
+     - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+     - OTEL_LOG_LEVEL=debug
+     - OTEL_PYTHON_LOG_CORRELATION=true
+     - OTEL_SERVICE_VERSION=1.0.0
+     - OTEL_PYTHON_AUTO_INSTRUMENTATION_ENABLED=true
+
+    command: opentelemetry-instrument uvicorn main:app --host 0.0.0.0 --port 8009
+
+
+
     volumes:
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/ai-logs-vol:/app/logs
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/cache:/root/.cache
@@ -396,6 +426,7 @@ services:
      - vachan-db
      - vachan-api
      - redis
+     - hyperdx
     profiles:
      - local-run
      - deployment
@@ -409,7 +440,7 @@ services:
 
 
  worker:
-    image: vachanengine/vachan-ai:25.5.28-beta
+    image: vachanengine/vachan-ai:25.7.21-beta
     healthcheck:
      timeout: 45s
      interval: 10s
