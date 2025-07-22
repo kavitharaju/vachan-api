@@ -69,9 +69,6 @@ server {
         proxy_pass http://vachan-api:8000;
     }
 
-    location /v2/demos/ {
-        proxy_pass http://vachan-demos:8002;  
-    }
 
     location /hyperdx/ {
         proxy_pass http://hyperdx:8010;  
