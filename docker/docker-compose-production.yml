@@ -361,7 +361,7 @@ services:
     restart: unless-stopped  
 
  vachan-ai:
-    image: vachanengine/vachan-ai:25.7.21-beta
+    image: vachanengine/vachan-ai:25.7.24-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -442,7 +442,7 @@ services:
 
 
  worker:
-    image: vachanengine/vachan-ai:25.7.21-beta
+    image: vachanengine/vachan-ai:25.7.24-beta
     healthcheck:
      timeout: 45s
      interval: 10s
