@@ -355,7 +355,7 @@ services:
 
 
  vachan-ai:
-    image: vachanengine/vachan-ai:25.7.24-beta
+    image: vachanengine/vachan-ai:25.7.28-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -440,7 +440,7 @@ services:
 
 
  worker:
-    image: vachanengine/vachan-ai:25.7.24-beta
+    image: vachanengine/vachan-ai:25.7.28-beta
     healthcheck:
      timeout: 45s
      interval: 10s
