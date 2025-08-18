@@ -70,7 +70,4 @@ server {
     }
 
 
-    location /hyperdx/ {
-        proxy_pass http://hyperdx:8010;  
-    }
 }

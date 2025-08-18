@@ -345,6 +345,14 @@ services:
       - "8010:8080"   # HyperDX UI
       - "4317:4317"    # OTLP gRPC (optional)
       - "4318:4318"    # OTLP HTTP (used by vachan-ai)
+    environment:
+      - HYPERDX_API_URL=${HYPERDX_DOMAIN}
+      - HYPERDX_APP_URL=${HYPERDX_DOMAIN}
+    volumes:
+      - ${VACHAN_AI_DATA_PATH:-/home/vachanstaging/vachan_ai_data}/hyperdx/db:/var/lib/mongodb
+      - ${VACHAN_AI_DATA_PATH:-/home/vachanstaging/vachan_ai_data}/hyperdx/data:/app/data
+      - ${VACHAN_AI_DATA_PATH:-/home/vachanstaging/vachan_ai_data}/hyperdx/clickhouse:/var/lib/clickhouse
+
     expose:
       - 4317
       - 4318
@@ -379,6 +387,7 @@ services:
      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
+     - OPENAI_API_KEY=${OPENAI_API_KEY}
      - VACHAN_AI_DATA_PATH=${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}
      - VACHAN_AI_LOGGING_LEVEL=INFO
      - VACHAN_LOGGING_LEVEL=INFO
@@ -466,6 +475,17 @@ services:
      - VACHAN_AI_LOGGING_LEVEL=INFO
      - WORKER_COUNT=${WORKER_COUNT:-4}
      - VACHAN_AI_REFERENCE_SPEAKERS=${VACHAN_AI_REFERENCE_SPEAKERS:-/app/reference_speakers}
+     - OPENAI_API_KEY=${OPENAI_API_KEY}
+     - HYPERDX_API_KEY=${HYPERDX_API_KEY}
+     - OTEL_SERVICE_NAME=vachan-ai
+     - OTEL_EXPORTER_OTLP_ENDPOINT=http://hyperdx:4318
+     - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+     - OTEL_LOG_LEVEL=debug
+     - OTEL_PYTHON_LOG_CORRELATION=true
+     - OTEL_SERVICE_VERSION=1.0.0
+     - OTEL_PYTHON_AUTO_INSTRUMENTATION_ENABLED=true
+
+
     command: rq worker-pool -n ${WORKER_COUNT} --url redis://:${VACHAN_REDIS_PASS}@redis:6379
     links:
       - redis
@@ -474,6 +494,7 @@ services:
       - vachan-db
       - redis
       - vachan-api
+      - hyperdx
     volumes:
      - ${VACHAN_AI_DATA_PATH:-/home/gitautodeploy/vachan_ai_data}/docker-volumes/redis_worker-logs-vol:/app/logs
      - ../data/csvs:/csvs
@@ -498,8 +519,10 @@ services:
      - 80
     depends_on:
      - vachan-api
+     - hyperdx 
     volumes:
      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+     - ./nginx/hyperdx.conf:/etc/nginx/conf.d/hyperdx.conf:ro  
      - logs-vol:/var/log/nginx/
     profiles:
      - local-run
@@ -517,12 +540,15 @@ services:
    - 443
   depends_on:
    - vachan-api
+   - hyperdx
   volumes:
    - ./nginx/prod/app.conf.template:/etc/nginx/templates/default.conf.template:ro
+   - ./nginx/prod/hyperdx.conf.template:/etc/nginx/templates/hyperdx.conf.template:ro
    - /home/vachanstaging/ssl:/etc/nginx/ssl:ro
    - logs-vol:/var/log/nginx/
   environment:
     - VACHAN_DOMAIN=${VACHAN_DOMAIN}
+    - HYPERDX_DOMAIN=${HYPERDX_DOMAIN}
   profiles:
    - deployment
   networks:
@@ -578,3 +604,9 @@ volumes:
   vachan-db-backup:
   kratos-db-backup:
   vachan-tbt-ml-models-vol:
+  hyperdx-db:
+    driver: local
+  hyperdx-data:
+    driver: local
+  hyperdx-clickhouse:
+    driver: local
