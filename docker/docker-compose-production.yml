@@ -353,12 +353,16 @@ services:
       - "4317:4317"    # OTLP gRPC (optional)
       - "4318:4318"    # OTLP HTTP (used by vachan-ai)
     environment:
-      - HYPERDX_API_URL=${HYPERDX_DOMAIN}
-      - HYPERDX_APP_URL=${HYPERDX_DOMAIN}
+      - HYPERDX_API_URL==https://trace.api.vachanengine.org
+      - HYPERDX_APP_URL==https://trace.api.vachanengine.org
+      # Add these for proper internal routing
+      - HYPERDX_PORT=8080
+      - HYPERDX_HOST=0.0.0.0
+      - TRUST_PROXY=true
     volumes:
-      - ${VACHAN_AI_DATA_PATH:-/home/vachanproduction/vachan_ai_data}/hyperdx/db:/var/lib/mongodb
-      - ${VACHAN_AI_DATA_PATH:-/home/vachanproduction/vachan_ai_data}/hyperdx/data:/app/data
-      - ${VACHAN_AI_DATA_PATH:-/home/vachanproduction/vachan_ai_data}/hyperdx/clickhouse:/var/lib/clickhouse
+      - ${VACHAN_AI_DATA_PATH:-/home/vachanproduction/vachan_ai_data}/docker-volumes/hyperdx-vol/mongodb:/data/db
+      - ${VACHAN_AI_DATA_PATH:-/home/vachanproduction/vachan_ai_data}/docker-volumes/hyperdx-vol/data:/app/data
+      - ${VACHAN_AI_DATA_PATH:-/home/vachanproduction/vachan_ai_data}/docker-volumes/hyperdx-vol/clickhouse:/var/lib/clickhouse
 
     expose:
       - 4317
@@ -544,7 +548,7 @@ services:
    - hyperdx
   volumes:
    - ./nginx/prod/app.conf.template:/etc/nginx/templates/default.conf.template:ro
-   - ./nginx/prod/hyperdx.conf.template:/etc/nginx/templates/hyperdx.conf.template:ro
+   - ./nginx/prod/hyper.conf.template:/etc/nginx/templates/hyper.conf.template:ro
   #  - ./certbot/www:/var/www/certbot/:ro
   #  - ./certbot/conf/:/etc/nginx/ssl/:ro
    - /home/vachanproduction/ssl:/etc/nginx/ssl:ro
