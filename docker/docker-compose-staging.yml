@@ -346,8 +346,8 @@ services:
       - "4317:4317"    # OTLP gRPC (optional)
       - "4318:4318"    # OTLP HTTP (used by vachan-ai)
     environment:
-      - HYPERDX_API_URL==https://trace.stagingapi.vachanengine.org
-      - HYPERDX_APP_URL==https://trace.stagingapi.vachanengine.org
+      - HYPERDX_API_URL=https://trace.stagingapi.vachanengine.org
+      - HYPERDX_APP_URL=https://trace.stagingapi.vachanengine.org
        # Add these for proper internal routing
       - HYPERDX_PORT=8080
       - HYPERDX_HOST=0.0.0.0
@@ -367,7 +367,7 @@ services:
 
 
  vachan-ai:
-    image: vachanengine/vachan-ai:25.7.28-beta
+    image: vachanengine/vachan-ai:25.9.30-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -453,7 +453,7 @@ services:
 
 
  worker:
-    image: vachanengine/vachan-ai:25.7.28-beta
+    image: vachanengine/vachan-ai:25.9.30-beta
     healthcheck:
      timeout: 45s
      interval: 10s
@@ -490,7 +490,7 @@ services:
      - OTEL_PYTHON_AUTO_INSTRUMENTATION_ENABLED=true
 
 
-    command: rq worker-pool -n ${WORKER_COUNT} --url redis://:${VACHAN_REDIS_PASS}@redis:6379
+    command: rq worker-pool -n ${WORKER_COUNT} --url redis://:${VACHAN_REDIS_PASS}@redis:6379 --job-class rq.job.Job
     links:
       - redis
       - vachan-db
