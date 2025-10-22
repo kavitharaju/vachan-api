@@ -39,6 +39,9 @@ server {
 
     location /v2/ai/ {
         proxy_pass http://vachan-ai:8009;
+        proxy_read_timeout ${AI_TIMEOUT};
+        proxy_connect_timeout ${AI_TIMEOUT};
+        proxy_send_timeout ${AI_TIMEOUT};  
     }
 
     location /v2/auth/ {

@@ -553,6 +553,7 @@ services:
   environment:
     - VACHAN_DOMAIN=${VACHAN_DOMAIN}
     - HYPERDX_DOMAIN=${HYPERDX_DOMAIN}
+    - AI_TIMEOUT=${AI_TIMEOUT:-300}
   profiles:
    - deployment
   networks:
