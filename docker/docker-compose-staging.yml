@@ -300,7 +300,7 @@ services:
 
  
  vachan-access:
-    image: vachanengine/vachan-access:v2.0.12
+    image: vachanengine/vachan-access:v2.0.19
     environment:
      - VACHAN_POSTGRES_HOST=vachan-db
      - VACHAN_POSTGRES_USER=${VACHAN_POSTGRES_USER:-postgres}
