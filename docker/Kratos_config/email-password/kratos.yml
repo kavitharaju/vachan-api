@@ -11,45 +11,56 @@ serve:
     base_url: http://kratos:4434/
 
 selfservice:
-  default_browser_return_url: http://kratos:4455/
+  # default_browser_return_url: http://kratos:4455/
+  # allowed_return_urls:
+  #   - http://kratos:4455
+  default_browser_return_url: https://api.vachanengine.org/
   allowed_return_urls:
-    - http://kratos:4455
+    # - http://127.0.0.1:4455
+    - https://api.vachanengine.org/
+    - http://kratos:4433/
 
   methods:
     password:
       enabled: true
+      config:
+        min_password_length: 6
+        haveibeenpwned_enabled: false
+        identifier_similarity_check_enabled: false
     link:
       enabled: true  
 
   flows:
-    error:
-      ui_url: http://kratos:4455/error
+    error: {}
+      # ui_url: http://kratos:4455/error
 
     settings:
-      ui_url: http://kratos:4455/settings
+      # ui_url: http://kratos:4455/settings
       privileged_session_max_age: 15m
 
     recovery:
       enabled: true
-      ui_url: http://kratos:4455/recovery
+      use: code
+      # ui_url: http://kratos:4455/recovery
 
     verification:
       enabled: true
-      ui_url: http://kratos:4455/verify
+      # ui_url: http://kratos:4455/verify
       after:
         default_browser_return_url: https://api.vachanengine.org/
 
     logout:
       after:
-        default_browser_return_url: http://kratos:4455/auth/login
+        # default_browser_return_url: http://kratos:4455/auth/login
+         default_browser_return_url: https://api.vachanengine.org/
 
     login:
-      ui_url: http://kratos:4455/auth/login
+      # ui_url: http://kratos:4455/auth/login
       lifespan: 2m
 
     registration:
       lifespan: 10m
-      ui_url: http://kratos:4455/auth/registration
+      # ui_url: http://kratos:4455/auth/registration
       after:
         password:
           hooks:
