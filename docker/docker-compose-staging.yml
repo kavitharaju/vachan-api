@@ -596,7 +596,7 @@ services:
      - VE-network
 
  bible-glyph:
-    image: kavitha3797/bible-glyph:latest
+    image: kavitha3797/bible-glyph:1.0.0-alpha.4
     ports:
       - "8011:8000"
     environment:
@@ -606,6 +606,8 @@ services:
       # to persist uploaded fonts
       - bible-glyph-vol:/app/data/fonts
     restart: unless-stopped
+    networks:
+     - VE-network
 
 networks:
    VE-network:
