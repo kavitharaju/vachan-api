@@ -598,7 +598,7 @@ services:
  bible-glyph:
     image: kavitha3797/bible-glyph:latest
     ports:
-      - "8000:8000"
+      - "8011:8000"
     environment:
       - BIBLE_GLYPH_BASEPATH=/v2/bible-glyph
       - TYPST_FONT_PATHS=/app/data/fonts
